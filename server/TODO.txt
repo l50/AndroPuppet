@@ -1,0 +1,2 @@
+1. Generate Puppetfile with Android to facilitate the installation of services and send it to the server
+2. Generate Vagrantfile with ANdroid to facilitate the installation of services and send it to the server
