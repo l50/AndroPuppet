@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/clientgw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gw"
+        android:layout_below="@+id/clientnetmask"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/clientnetmask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subnet_mask"
+        android:layout_below="@+id/clientip"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/clientip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ip_addr"
+        android:layout_marginTop="236dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/clientdns"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dns"
+        android:layout_below="@+id/clientgw"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

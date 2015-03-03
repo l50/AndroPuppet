@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroPuppet</string>
+    <string-array name="settings_array">
+        <item>Server Settings</item>
+        <item>Client Settings</item>
+    </string-array>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="ip_addr"> IP Address: </string>
+    <string name="subnet_mask">Subnet Mask: </string>
+    <string name="gw">Default Gateway: </string>
+    <string name="dns">DNS Server: </string>
+
+</resources>
