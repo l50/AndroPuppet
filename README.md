@@ -3,7 +3,7 @@
 ![AndroPuppet Logo](https://github.com/l50/AndroPuppet/blob/master/images/AndroPuppet.png "AndroPuppet")
 
 ##Functionality
-AndroPuppet allows you to quickly and efficiently deploy a miniature cloud using minimal hardware. AndroPuppet interfaces with a laptop or desktop running a Debian-based derivative, along with Puppet and Vagrant. The server should be able to support up to four virtual machines (depending on hardware restrictions and both the server and the vm). These virtual machines can run any variety of system templates which are selected using AndroPuppet. This can be incredibly useful for groups that need a consistent computing experience that is mobile and easily repeatable.
+AndroPuppet allows you to quickly and efficiently deploy a miniature cloud using minimal hardware. AndroPuppet interfaces with a laptop or desktop running a Debian-based derivative, along with Puppet and Vagrant. The server should be able to support up to four virtual machines (depending on hardware restrictions on both the server and the vm). These virtual machines can run any variety of system templates which are selected using AndroPuppet. This can be incredibly useful for groups that need a consistent computing experience that is mobile and easily repeatable.
 
 The following templates are currently available:
 
@@ -20,9 +20,9 @@ AndroPuppet will need a laptop or desktop with the following hardware requiremen
 
 Debian-based operating system
 
-8 GB RAM
+>= 8 GB RAM
 
-2 CPU cores
+>= 2 CPU cores (4 is more ideal)
 
 Android device running >= Android 4.0
 
@@ -42,7 +42,7 @@ If there are four virtual machines already created, the user will be required to
 
 ##Future Work
 
-I would eventually like to build in functionality to allow a user to specify services as well as an operating for a box, so that they can build a completely customized box. 
+I would like to eventually build in functionality that would allow a user to specify services as well as an operating for a box, so that they can build a completely customized box. 
 
 ###Miscellaneous footnotes
 Clone into repo without account: git clone git://github.com/SomeUser/SomeRepo.git
