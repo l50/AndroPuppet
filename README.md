@@ -20,9 +20,9 @@ AndroPuppet will need a laptop or desktop with the following hardware requiremen
 
 Debian-based operating system
 
->= 8 GB RAM
+\>= 8 GB RAM
 
->= 2 CPU cores (4 is more ideal)
+\>= 2 CPU cores (4 is more ideal)
 
 Android device running >= Android 4.0
 
