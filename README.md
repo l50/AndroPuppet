@@ -1,5 +1,6 @@
 #AndroPuppet
-![AndroPuppet Logo](https://github.com/l50/AndroPuppet/blob/master/images/AndroCloud.png "AndroPuppet Logo")
+
+![AndroPuppet Logo](https://github.com/l50/AndroPuppet/blob/master/images/AndroPuppet.png "AndroPuppet")
 
 ##Functionality
 AndroPuppet allows you to quickly and efficiently deploy a miniature cloud using minimal hardware. AndroPuppet interfaces with a laptop or desktop running a Debian-based derivative, along with Puppet and Vagrant. The server should be able to support up to four virtual machines (depending on hardware restrictions and both the server and the vm). These virtual machines can run any variety of system templates which are selected using AndroPuppet. This can be incredibly useful for groups that need a consistent computing experience that is mobile and easily repeatable.
