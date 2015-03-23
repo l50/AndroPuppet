@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AndroPuppet</string>
+    <string name="app_name">AndroCloud</string>
     <string-array name="settings_array">
         <item>Server Settings</item>
         <item>Client Settings</item>

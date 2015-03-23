@@ -1,4 +1,4 @@
-package info.teamgrinnich.slidemenu;
+package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -24,13 +25,22 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 /**
  * Main Activity for ViewComponent for AndroPuppet
- *
+ * <p/>
  * Based on code from here: https://developer.android.com/training/implementing-navigation/nav-drawer.html
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
@@ -48,6 +58,10 @@ public class MainActivity extends Activity
     private String[] mSettingTitles;
 
     public static final String MENU_ITEM = "menu_item_number";
+    /**
+     * Used to run debug blocks which help move development along
+     */
+    public static boolean DEBUG = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -278,6 +292,63 @@ public class MainActivity extends Activity
         return matcher.matches();
     }
 
+    private static void testConnection(String ipAddress) throws IOException
+    {
+//        Pattern successfulSSH = Pattern.compile(".*Desktop");
+
+        JSch jsch = new JSch();
+        com.jcraft.jsch.Session session = null;
+        String result = "";
+
+        try
+        {
+            session = jsch.getSession("user", ipAddress, 22);
+            session.setPassword("pass");
+
+            // Avoid asking for key confirmation
+            Properties prop = new Properties();
+            prop.put("StrictHostKeyChecking", "no");
+            session.setConfig(prop);
+            session.connect();
+
+            // SSH Channel
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            channel.setOutputStream(stream);
+
+            // Execute command
+            channel.setCommand("ls -lart");
+            channel.connect(1000);
+            java.lang.Thread.sleep(500);
+
+//            result = stream.toString();
+//            System.out.println(result);
+
+//            Matcher matcher = successfulSSH.matcher(result);
+//            if (!matcher.matches())
+//            {
+            // getActivity()
+//                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
+//                toast.show();
+//            }
+        }
+        catch (JSchException ex)
+        {
+            String s = ex.toString();
+            System.out.println(s);
+        }
+        catch (InterruptedException ex)
+        {
+            String s = ex.toString();
+            System.out.println(s);
+        }
+        finally
+        {
+            if (session != null)
+                session.disconnect();
+        }
+    }
+
     /**
      * Fragment for server settings menu option
      */
@@ -307,27 +378,63 @@ public class MainActivity extends Activity
                 public void onClick(View v)
                 {
                     final String ip = ipText.getText().toString();
+                    final String sm = smText.getText().toString();
+                    final String gw = gwText.getText().toString();
+                    final String dns = dnsText.getText().toString();
+
+                    if (DEBUG)
+                    {
+                        ipText.setText("10.168.1.145");
+                        smText.setText("10.255.255.0");
+                        gwText.setText("10.168.1.1");
+                        dnsText.setText("10.168.1.1");
+                    }
+
+                    boolean validSettings = true;
                     if (!isValidIP(ip))
                     {
                         ipText.setError("Invalid IP");
-                    }
 
-                    final String sm = smText.getText().toString();
-                    if (!isValidSubnet(sm))
+                    }
+                    else if (!isValidSubnet(sm))
                     {
                         smText.setError("Invalid Subnet Mask");
                     }
-
-                    final String gw = gwText.getText().toString();
-                    if (!isValidIP(gw))
+                    else if (!isValidIP(gw))
                     {
                         gwText.setError("Invalid Gateway");
                     }
-
-                    final String dns = dnsText.getText().toString();
-                    if (!isValidIP(dns))
+                    else if (!isValidIP(dns))
                     {
                         dnsText.setError("Invalid DNS Server");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            new AsyncTask<Integer, Void, Void>()
+                            {
+                                @Override
+                                protected Void doInBackground(Integer... params)
+                                {
+                                    try
+                                    {
+                                        testConnection(ip);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    return null;
+                                }
+                            }.execute(1);
+
+                        }
+                        catch (Exception e)
+                        {
+                            Toast toast = Toast.makeText(getActivity(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
                     }
                 }
             });

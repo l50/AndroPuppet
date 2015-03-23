@@ -1,4 +1,4 @@
-package info.teamgrinnich.slidemenu;
+package info.teamgrinnich.andropuppet;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

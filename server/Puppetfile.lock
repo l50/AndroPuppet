@@ -1,27 +1,24 @@
 FORGE
   remote: https://forgeapi.puppetlabs.com
   specs:
-    puppetlabs-apache (1.2.0)
-      puppetlabs-concat (>= 1.1.1)
-      puppetlabs-stdlib (>= 2.4.0)
-    puppetlabs-apt (1.7.0)
+    camptocamp-archive (0.4.0)
+    danzilio-virtualbox (1.2.1)
+      camptocamp-archive (>= 0.1.0)
+      puppetlabs-apt (< 2.0.0, >= 1.0.0)
+      puppetlabs-stdlib (< 5.0.0, >= 2.6.0)
+      stahnma-epel (< 2.0.0, >= 0.0.6)
+    puppetlabs-apt (1.8.0)
       puppetlabs-stdlib (>= 2.2.1)
-    puppetlabs-concat (1.1.2)
-      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
-    puppetlabs-git (0.3.0)
-      puppetlabs-vcsrepo (>= 0.1.0)
-    puppetlabs-ntp (3.3.0)
-      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
-    puppetlabs-ruby (0.4.0)
-      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
+    stahnma-epel (1.0.2)
+
+GIT
+  remote: git://github.com/puppetlabs/puppetlabs-stdlib.git
+  ref: master
+  sha: 4dab70b305c4ab1c8c36356efa4bd205678c7c49
+  specs:
     puppetlabs-stdlib (4.5.1)
-    puppetlabs-vcsrepo (1.2.0)
 
 DEPENDENCIES
-  puppetlabs-apache (>= 0)
-  puppetlabs-apt (>= 0)
-  puppetlabs-git (>= 0)
-  puppetlabs-ntp (>= 0)
-  puppetlabs-ruby (>= 0)
+  danzilio-virtualbox (>= 0)
   puppetlabs-stdlib (>= 0)
 
