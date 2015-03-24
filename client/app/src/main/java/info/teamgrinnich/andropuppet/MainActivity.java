@@ -292,9 +292,9 @@ public class MainActivity extends Activity
         return matcher.matches();
     }
 
-    private static void testConnection(String ipAddress) throws IOException
+    private static String testConnection(String ipAddress) throws IOException
     {
-//        Pattern successfulSSH = Pattern.compile(".*Desktop");
+        Pattern successfulSSH = Pattern.compile("Desktop");
 
         JSch jsch = new JSch();
         com.jcraft.jsch.Session session = null;
@@ -321,31 +321,31 @@ public class MainActivity extends Activity
             channel.connect(1000);
             java.lang.Thread.sleep(500);
 
-//            result = stream.toString();
-//            System.out.println(result);
+            result = stream.toString();
 
-//            Matcher matcher = successfulSSH.matcher(result);
-//            if (!matcher.matches())
-//            {
-            // getActivity()
-//                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
-//                toast.show();
-//            }
+            Matcher matcher = successfulSSH.matcher(result);
+            if (matcher.find())
+            {
+                result = "Successfully connected!";
+            }
         }
         catch (JSchException ex)
         {
             String s = ex.toString();
             System.out.println(s);
+            result = "Invalid credentials!";
         }
         catch (InterruptedException ex)
         {
             String s = ex.toString();
             System.out.println(s);
+            result = "Connection interrupted!";
         }
         finally
         {
             if (session != null)
                 session.disconnect();
+            return result;
         }
     }
 
@@ -384,17 +384,14 @@ public class MainActivity extends Activity
 
                     if (DEBUG)
                     {
-                        ipText.setText("10.168.1.145");
-                        smText.setText("10.255.255.0");
-                        gwText.setText("10.168.1.1");
-                        dnsText.setText("10.168.1.1");
+                        ipText.setText("192.168.1.145");
+                        smText.setText("255.255.255.0");
+                        gwText.setText("192.168.1.1");
+                        dnsText.setText("192.168.1.1");
                     }
-
-                    boolean validSettings = true;
                     if (!isValidIP(ip))
                     {
                         ipText.setError("Invalid IP");
-
                     }
                     else if (!isValidSubnet(sm))
                     {
@@ -412,22 +409,28 @@ public class MainActivity extends Activity
                     {
                         try
                         {
-                            new AsyncTask<Integer, Void, Void>()
+                            new AsyncTask<String, String, String>()
                             {
                                 @Override
-                                protected Void doInBackground(Integer... params)
+                                protected String doInBackground(String... params)
                                 {
+                                    String result = "";
                                     try
                                     {
-                                        testConnection(ip);
+                                        result = testConnection(ip);
                                     }
                                     catch (Exception e)
                                     {
                                         e.printStackTrace();
                                     }
-                                    return null;
+                                    return result;
                                 }
-                            }.execute(1);
+//                                @Override
+                                protected void onPostExecute(String result)
+                                {
+                                    Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                                }
+                            }.execute("1");
 
                         }
                         catch (Exception e)
@@ -438,7 +441,6 @@ public class MainActivity extends Activity
                     }
                 }
             });
-
             getActivity().setTitle(listItem);
             return rootView;
         }
