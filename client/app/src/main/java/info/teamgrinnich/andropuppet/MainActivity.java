@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
@@ -40,12 +41,12 @@ import java.util.regex.Pattern;
 
 /**
  * Main Activity for ViewComponent for AndroPuppet
- * <p/>
+ *
  * Based on code from here: https://developer.android.com/training/implementing-navigation/nav-drawer.html
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
  * @version 1.0
- * @since 2014-03-01
+ * @since 2014-03-24
  */
 public class MainActivity extends Activity
 {
@@ -61,7 +62,7 @@ public class MainActivity extends Activity
     /**
      * Used to run debug blocks which help move development along
      */
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -372,7 +373,8 @@ public class MainActivity extends Activity
             final EditText gwText = (EditText) rootView.findViewById(R.id.edittextgw);
             final EditText dnsText = (EditText) rootView.findViewById(R.id.edittextdns);
 
-            rootView.findViewById(R.id.serverConnectButton).setOnClickListener(new View.OnClickListener()
+            // Listener for test connection button
+            rootView.findViewById(R.id.testServerConnectButton).setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -425,7 +427,8 @@ public class MainActivity extends Activity
                                     }
                                     return result;
                                 }
-//                                @Override
+
+                                //                                @Override
                                 protected void onPostExecute(String result)
                                 {
                                     Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
@@ -439,6 +442,17 @@ public class MainActivity extends Activity
                             toast.show();
                         }
                     }
+                }
+            });
+            // Listener for connect button
+            rootView.findViewById(R.id.serverConnectButton).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.animator.animation1,R.animator.animation2);
                 }
             });
             getActivity().setTitle(listItem);

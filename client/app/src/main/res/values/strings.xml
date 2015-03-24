@@ -14,5 +14,12 @@
     <string name="subnet_mask">Subnet Mask: </string>
     <string name="gw">Default Gateway: </string>
     <string name="dns">DNS Server: </string>
+    <string name="title_activity_select_machine">SelectMachineActivity</string>
+    <string name="dev_machine">Basic Developer Machine</string>
+    <string name="pentesting_machine">Penetration Testing Machine</string>
+    <string name="build">Build!</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

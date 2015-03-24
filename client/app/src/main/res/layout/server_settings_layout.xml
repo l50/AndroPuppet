@@ -83,10 +83,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect"
-        android:id="@+id/serverConnectButton"
-        android:layout_marginTop="128dp"
+        android:text="Test Connection"
+        android:id="@+id/testServerConnectButton"
+        android:layout_marginTop="97dp"
         android:layout_below="@+id/edittextdns"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect"
+        android:minEms="5"
+        android:id="@+id/serverConnectButton"
+        android:layout_below="@+id/testServerConnectButton"
         android:layout_centerHorizontal="true"/>
 
 
