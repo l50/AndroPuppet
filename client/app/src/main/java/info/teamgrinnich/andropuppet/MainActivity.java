@@ -38,10 +38,12 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Main Activity for ViewComponent for AndroPuppet
- *
+ * <p/>
+ * Used to facilitate testing connectivity from the Android device to the cloud server and get the network
+ * information about the Android device
+ * <p/>
  * Based on code from here: https://developer.android.com/training/implementing-navigation/nav-drawer.html
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
@@ -62,7 +64,7 @@ public class MainActivity extends Activity
     /**
      * Used to run debug blocks which help move development along
      */
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -155,6 +157,12 @@ public class MainActivity extends Activity
         }
     }
 
+    /**
+     * Get information about the network the android device is connected to
+     *
+     * @param context current context
+     * @return all network information for the android device
+     */
     private String[] getNetworkInformation(Context context)
     {
         String[] output = new String[4];
@@ -172,6 +180,11 @@ public class MainActivity extends Activity
         return output;
     }
 
+    /**
+     * Select one of the fragment items
+     *
+     * @param position position of the fragment on the menu
+     */
     private void selectItem(int position)
     {
         Fragment fragment = null;
@@ -229,9 +242,11 @@ public class MainActivity extends Activity
      */
     public static class client_settings_Fragment extends Fragment
     {
+        /**
+         * Empty constructor required for fragment subclasses
+         */
         public client_settings_Fragment()
         {
-            // Empty constructor required for fragment subclasses
         }
 
         @Override
@@ -293,6 +308,13 @@ public class MainActivity extends Activity
         return matcher.matches();
     }
 
+    /**
+     * Test connectivity from Android device to the cloud server
+     *
+     * @param ipAddress IP address for the cloud server
+     * @return The result of attempting to connect to the server
+     * @throws IOException If there is an issue during connectivity
+     */
     private static String testConnection(String ipAddress) throws IOException
     {
         Pattern successfulSSH = Pattern.compile("Desktop");
@@ -386,10 +408,10 @@ public class MainActivity extends Activity
 
                     if (DEBUG)
                     {
-                        ipText.setText("192.168.1.145");
+                        ipText.setText("10.80.36.116");
                         smText.setText("255.255.255.0");
-                        gwText.setText("192.168.1.1");
-                        dnsText.setText("192.168.1.1");
+                        gwText.setText("10.80.36.1");
+                        dnsText.setText("10.80.36.1");
                     }
                     if (!isValidIP(ip))
                     {
@@ -428,7 +450,6 @@ public class MainActivity extends Activity
                                     return result;
                                 }
 
-                                //                                @Override
                                 protected void onPostExecute(String result)
                                 {
                                     Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
@@ -452,7 +473,7 @@ public class MainActivity extends Activity
                 {
                     Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
                     startActivity(intent);
-                    getActivity().overridePendingTransition(R.animator.animation1,R.animator.animation2);
+                    getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
                 }
             });
             getActivity().setTitle(listItem);

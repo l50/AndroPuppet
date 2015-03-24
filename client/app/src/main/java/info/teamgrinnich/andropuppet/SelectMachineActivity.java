@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Activity to select machine template to build for AndroPuppet
+ * Activity to select the machine template to build for AndroPuppet
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
  * @version 1.0
@@ -41,9 +41,16 @@ public class SelectMachineActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_machine);
 
-        addButtonListener();
+        onButtonPress();
     }
 
+    /**
+     * Get command to pass to the cloud server to build the machine that corresponds to the radio
+     * button associated with it
+     *
+     * @param machine machine that we want to build
+     * @return the command to build the machine selected
+     */
     private static String getCommand(String machine)
     {
         if (machine == "Basic Developer Machine")
@@ -53,6 +60,14 @@ public class SelectMachineActivity extends Activity
         else return "buildDev.sh";
     }
 
+    /**
+     * Facilitate building a machine based on a cloud server
+     *
+     * @param machine   The type of machine we want to build
+     * @param ipAddress The ip address of the cloud server to build the machine on
+     * @return The result of trying to build the machine
+     * @throws IOException If there is an issue during connectivity
+     */
     private static String buildMachine(String machine, String ipAddress) throws IOException
     {
         JSch jsch = new JSch();
@@ -108,20 +123,18 @@ public class SelectMachineActivity extends Activity
         }
     }
 
-    public void addButtonListener()
+    /**
+     * Facilitate all activity that occurs upon clicking the build button
+     */
+    public void onButtonPress()
     {
-
         radioGroupId = (RadioGroup) findViewById(R.id.machineButtonGroup);
-
         button = (Button) findViewById(R.id.build_button);
-
         button.setOnClickListener(new View.OnClickListener()
         {
-
             @Override
             public void onClick(View v)
             {
-
                 // get the selected radio button from the group
                 int selectedOption = radioGroupId.getCheckedRadioButtonId();
 
@@ -138,7 +151,6 @@ public class SelectMachineActivity extends Activity
                             String result = "";
                             // Change this
                             String ipAddress = "10.80.36.116";
-
                             try
                             {
                                 result = buildMachine(radioButton.getText().toString(), ipAddress);
@@ -155,7 +167,6 @@ public class SelectMachineActivity extends Activity
                             Toast.makeText(SelectMachineActivity.this, result, Toast.LENGTH_SHORT).show();
                         }
                     }.execute("1");
-
                 }
                 catch (Exception e)
                 {
@@ -163,8 +174,6 @@ public class SelectMachineActivity extends Activity
                     toast.show();
                 }
             }
-
         });
-
     }
 }
