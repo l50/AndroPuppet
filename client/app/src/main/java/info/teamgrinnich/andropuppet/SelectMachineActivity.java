@@ -59,10 +59,10 @@ public class SelectMachineActivity extends Activity
     private String getCommand(String machine)
     {
         if (machine == "Basic Developer Machine")
-            return "cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up)";
         else if (machine == "Penetration Testing Machine")
-            return "cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up";
-        else return "buildDev.sh";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up)";
+        else return "bash buildDev.sh";
     }
 
     /**
@@ -99,7 +99,7 @@ public class SelectMachineActivity extends Activity
             channel.setOutputStream(stream);
 
             // Execute command
-            channel.setCommand("bash buildDev.sh");
+            channel.setCommand(command);
             channel.connect(1000);
             java.lang.Thread.sleep(500);
 
