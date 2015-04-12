@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
  * @version 1.0
- * @since 2014-03-24
+ * @since 2014-04-07
  */
 public class MainActivity extends Activity
 {
@@ -408,7 +408,7 @@ public class MainActivity extends Activity
 
                     if (DEBUG)
                     {
-                        ipText.setText("10.80.36.116");
+//                        ipText.setText("10.80.202.28");
                         smText.setText("255.255.255.0");
                         gwText.setText("10.80.36.1");
                         dnsText.setText("10.80.36.1");
@@ -471,11 +471,23 @@ public class MainActivity extends Activity
                 @Override
                 public void onClick(View v)
                 {
-                    Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
-                    startActivity(intent);
-                    getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                    // Used to hold ip, which we will pass to the next activity
+                    final String ip = ipText.getText().toString();
+                    // Ensure an ip exists and is properly formatted
+                    if (!isValidIP(ip))
+                    {
+                        ipText.setError("Invalid IP");
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
+                        intent.putExtra("cloudServerIP", ip);
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                    }
                 }
             });
+
             getActivity().setTitle(listItem);
             return rootView;
         }

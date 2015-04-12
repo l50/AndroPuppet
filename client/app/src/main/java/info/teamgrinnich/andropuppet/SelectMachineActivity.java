@@ -29,6 +29,7 @@ public class SelectMachineActivity extends Activity
     private RadioGroup radioGroupId;
     private RadioButton radioButton;
     private Button button;
+    private String ipAddress = "";
 
     /**
      * Used to run debug blocks which help move development along
@@ -40,7 +41,11 @@ public class SelectMachineActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_machine);
-
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+        {
+            ipAddress = extras.getString("cloudServerIP");
+        }
         onButtonPress();
     }
 
@@ -51,12 +56,12 @@ public class SelectMachineActivity extends Activity
      * @param machine machine that we want to build
      * @return the command to build the machine selected
      */
-    private static String getCommand(String machine)
+    private String getCommand(String machine)
     {
         if (machine == "Basic Developer Machine")
-            return "bash buildDev.sh";
+            return "cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up";
         else if (machine == "Penetration Testing Machine")
-            return "bash buildPen.sh";
+            return "cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up";
         else return "buildDev.sh";
     }
 
@@ -68,7 +73,7 @@ public class SelectMachineActivity extends Activity
      * @return The result of trying to build the machine
      * @throws IOException If there is an issue during connectivity
      */
-    private static String buildMachine(String machine, String ipAddress) throws IOException
+    private String buildMachine(String machine, String ipAddress) throws IOException
     {
         JSch jsch = new JSch();
         com.jcraft.jsch.Session session = null;
@@ -149,8 +154,6 @@ public class SelectMachineActivity extends Activity
                         protected String doInBackground(String... params)
                         {
                             String result = "";
-                            // Change this
-                            String ipAddress = "10.80.36.116";
                             try
                             {
                                 result = buildMachine(radioButton.getText().toString(), ipAddress);
