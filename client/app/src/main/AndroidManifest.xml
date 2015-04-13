@@ -23,6 +23,10 @@
             android:name=".SelectMachineActivity"
             android:label="@string/title_activity_select_machine" >
         </activity>
+        <activity
+            android:name=".Dashboard"
+            android:label="@string/title_activity_dashboard" >
+        </activity>
     </application>
 
 </manifest>
