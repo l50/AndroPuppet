@@ -2,9 +2,9 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.puppet_install.puppet_version = :latest
 
-  config.vm.define :testbox do |testbox|
-    testbox.vm.hostname = 'testbox'
-    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: "192.168.1.45"
+  config.vm.define :developer do |developer|
+    developer.vm.hostname = 'developer'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
     config.librarian_puppet.puppetfile_dir = "puppet"
 
     # Install vagrant
@@ -22,7 +22,37 @@ Vagrant.configure(2) do |config|
     apt-get install nfs-kernel-server -y
   SHELL
 
-    testbox.vm.provider :virtualbox do |vm|
+    developer.vm.provider :virtualbox do |vm|
+      #vm.gui = true
+      vm.customize [
+                       "modifyvm", :id,
+                       "--memory", 1024,
+                       "--cpus", "1"
+                   ]
+    end
+  end
+
+  config.vm.define :penetration do |penetration|
+    penetration.vm.hostname = 'penetration'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.librarian_puppet.puppetfile_dir = "puppet"
+
+    # Install vagrant
+    config.vm.provision "shell", :inline => <<-SHELL
+    # Install vagrant
+    wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
+    dpkg -i *.deb
+    # Install git
+    apt-get install git -y
+    # Used to install puppet on vagrant machines
+    vagrant plugin install vagrant-puppet-install
+    # Install emacs for debugging purposes
+    apt-get install emacs -y
+    # Used for vagrant boxes
+    apt-get install nfs-kernel-server -y
+    SHELL
+
+    penetration.vm.provider :virtualbox do |vm|
       #vm.gui = true
       vm.customize [
                        "modifyvm", :id,
