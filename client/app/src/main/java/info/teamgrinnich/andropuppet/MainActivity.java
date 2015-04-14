@@ -408,7 +408,7 @@ public class MainActivity extends Activity
 
                     if (DEBUG)
                     {
-//                        ipText.setText("10.80.202.28");
+                        ipText.setText("192.168.1.145");
                         smText.setText("255.255.255.0");
                         gwText.setText("10.80.36.1");
                         dnsText.setText("10.80.36.1");
@@ -480,14 +480,14 @@ public class MainActivity extends Activity
                     }
                     else
                     {
-                        Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
+//                        Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
+                        Intent intent = new Intent(getActivity(), Dashboard.class);
                         intent.putExtra("cloudServerIP", ip);
                         startActivity(intent);
                         getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
                     }
                 }
             });
-
             getActivity().setTitle(listItem);
             return rootView;
         }

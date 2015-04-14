@@ -1,8 +1,10 @@
 package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -58,11 +60,12 @@ public class SelectMachineActivity extends Activity
      */
     private String getCommand(String machine)
     {
-        if (machine == "Basic Developer Machine")
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up)";
-        else if (machine == "Penetration Testing Machine")
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up)";
-        else return "bash buildDev.sh";
+        if (machine.equals("Basic Developer Machine"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up developer)";
+        else if (machine.equals("Penetration Testing Machine"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up penetration)";
+        else
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up penetration)";
     }
 
     /**
@@ -165,7 +168,7 @@ public class SelectMachineActivity extends Activity
                             return result;
                         }
 
-                        protected void onPostExecute(String result)
+                        protected void onPostExecute(final String result)
                         {
                             Toast.makeText(SelectMachineActivity.this, result, Toast.LENGTH_SHORT).show();
                         }
@@ -176,6 +179,20 @@ public class SelectMachineActivity extends Activity
                     Toast toast = Toast.makeText(SelectMachineActivity.this, "Unable to connect to the target system!", Toast.LENGTH_SHORT);
                     toast.show();
                 }
+                // Set up to work properly with the Toast announcing the successful creation of a machine
+                final Intent intent = new Intent(v.getContext(), Dashboard.class);
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable()
+                {
+                    public void run()
+                    {
+                        intent.putExtra("cloudServerIP", ipAddress);
+                        startActivity(intent);
+                        overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                    }
+                }, 3500);
+
             }
         });
     }
