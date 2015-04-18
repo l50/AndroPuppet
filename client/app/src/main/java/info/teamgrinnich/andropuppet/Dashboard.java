@@ -29,6 +29,8 @@ public class Dashboard extends Activity
     private ArrayList<String> machineList;
     private ArrayAdapter<String> adapter;
     private String ipAddress = "";
+    private String user = "";
+    private String pass = "";
 
     private HashMap parseOutput(String machines)
     {
@@ -61,7 +63,7 @@ public class Dashboard extends Activity
      * @return The result of trying to build the machine
      * @throws java.io.IOException If there is an issue during connectivity
      */
-    private HashMap queryMachine(String ipAddress) throws IOException
+    private HashMap queryMachine(String ipAddress, String user, String pass) throws IOException
     {
         JSch jsch = new JSch();
         com.jcraft.jsch.Session session = null;
@@ -69,8 +71,8 @@ public class Dashboard extends Activity
         String command = "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant status)";
         try
         {
-            session = jsch.getSession("user", ipAddress, 22);
-            session.setPassword("pass");
+            session = jsch.getSession(user, ipAddress, 22);
+            session.setPassword(pass);
 
             // Avoid asking for key confirmation
             Properties prop = new Properties();
@@ -87,7 +89,7 @@ public class Dashboard extends Activity
             channel.setCommand(command);
             channel.connect(1000);
             // Need to increase to this point to allow for the result to come in
-            java.lang.Thread.sleep(6000);
+            java.lang.Thread.sleep(8000);
 
             result = stream.toString();
         }
@@ -129,6 +131,8 @@ public class Dashboard extends Activity
         if (extras != null)
         {
             ipAddress = extras.getString("cloudServerIP");
+            user = extras.getString("username");
+            pass = extras.getString("password");
         }
         Toast status2 = Toast.makeText(Dashboard.this, "Populating Systems, please wait!", Toast.LENGTH_LONG);
         status2.show();
@@ -143,10 +147,12 @@ public class Dashboard extends Activity
                     HashMap result = null;
                     try
                     {
-                        result = queryMachine(ipAddress);
+                        result = queryMachine(ipAddress, user, pass);
+                        // Maybe take out, was trying to fix the problem where the query comes back
+                        // empty
                         if (result.isEmpty())
                         {
-                            result = queryMachine(ipAddress);
+                            result = queryMachine(ipAddress, user, pass);
                         }
                     }
                     catch (Exception e)
@@ -180,10 +186,20 @@ public class Dashboard extends Activity
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(v.getContext(), SelectMachineActivity.class);
-                intent.putExtra("cloudServerIP", ipAddress);
-                startActivity(intent);
-                overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                if (machineList.size() < 4)
+                {
+                    Intent intent = new Intent(v.getContext(), SelectMachineActivity.class);
+                    intent.putExtra("cloudServerIP", ipAddress);
+                    intent.putExtra("username", user);
+                    intent.putExtra("password", pass);
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                }
+                else
+                {
+                    Toast toast = Toast.makeText(Dashboard.this, "You can only have 4 machines, delete a machine and try again!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         });
     }

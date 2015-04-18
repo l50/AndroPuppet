@@ -22,61 +22,40 @@
         android:layout_alignParentStart="true"/>
 
     <TextView
-        android:id="@+id/sm"
+        android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/subnet_mask"
+        android:text="@string/username"
         android:layout_below="@+id/edittextip"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <EditText
-        android:id="@+id/edittextsm"
+        android:id="@+id/edittextuser"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="phone"
-        android:layout_below="@+id/sm"
+        android:layout_below="@+id/user"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <TextView
-        android:id="@+id/gw"
+        android:id="@+id/pw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/gw"
+        android:text="@string/password"
         android:singleLine="true"
-        android:layout_below="@+id/edittextsm"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <TextView
-        android:id="@+id/dns"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dns"
-        android:layout_below="@+id/edittextgw"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-
-    <EditText
-        android:id="@+id/edittextgw"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="phone"
-        android:layout_below="@+id/gw"
+        android:layout_below="@+id/edittextuser"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <EditText
-        android:id="@+id/edittextdns"
+        android:id="@+id/edittextpw"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="phone"
-        android:layout_below="@+id/dns"
+        android:inputType="textPassword"
+        android:layout_below="@+id/pw"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
@@ -86,7 +65,7 @@
         android:text="Test Connection"
         android:id="@+id/testServerConnectButton"
         android:layout_marginTop="97dp"
-        android:layout_below="@+id/edittextdns"
+        android:layout_below="@+id/edittextpw"
         android:layout_centerHorizontal="true"/>
 
     <Button

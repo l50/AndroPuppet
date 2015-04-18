@@ -294,28 +294,13 @@ public class MainActivity extends Activity
     }
 
     /**
-     * Validate Subnet Mask
-     *
-     * @param subnetMask subnet mask to validate
-     * @return whether or not the subnet mask is valid
-     */
-    private static boolean isValidSubnet(String subnetMask)
-    {
-        Pattern validSubnet = Pattern.compile("^((128|192|224|240|248|252|254)\\.0\\.0\\.0)|" +
-                "(255\\.(((0|128|192|224|240|248|252|254)\\.0\\.0)|(255\\.(((0|128|192|224" +
-                "|240|248|252|254)\\.0)|255\\.(0|128|192|224|240|248|252|254)))))$");
-        Matcher matcher = validSubnet.matcher(subnetMask);
-        return matcher.matches();
-    }
-
-    /**
      * Test connectivity from Android device to the cloud server
      *
      * @param ipAddress IP address for the cloud server
      * @return The result of attempting to connect to the server
      * @throws IOException If there is an issue during connectivity
      */
-    private static String testConnection(String ipAddress) throws IOException
+    private static String testConnection(String ipAddress, String username, String password) throws IOException
     {
         Pattern successfulSSH = Pattern.compile("Desktop");
 
@@ -325,8 +310,8 @@ public class MainActivity extends Activity
 
         try
         {
-            session = jsch.getSession("user", ipAddress, 22);
-            session.setPassword("pass");
+            session = jsch.getSession(username, ipAddress, 22);
+            session.setPassword(password);
 
             // Avoid asking for key confirmation
             Properties prop = new Properties();
@@ -391,9 +376,8 @@ public class MainActivity extends Activity
             String listItem = getResources().getStringArray(R.array.settings_array)[i];
 
             final EditText ipText = (EditText) rootView.findViewById(R.id.edittextip);
-            final EditText smText = (EditText) rootView.findViewById(R.id.edittextsm);
-            final EditText gwText = (EditText) rootView.findViewById(R.id.edittextgw);
-            final EditText dnsText = (EditText) rootView.findViewById(R.id.edittextdns);
+            final EditText userText = (EditText) rootView.findViewById(R.id.edittextuser);
+            final EditText pwText = (EditText) rootView.findViewById(R.id.edittextpw);
 
             // Listener for test connection button
             rootView.findViewById(R.id.testServerConnectButton).setOnClickListener(new View.OnClickListener()
@@ -402,32 +386,16 @@ public class MainActivity extends Activity
                 public void onClick(View v)
                 {
                     final String ip = ipText.getText().toString();
-                    final String sm = smText.getText().toString();
-                    final String gw = gwText.getText().toString();
-                    final String dns = dnsText.getText().toString();
+                    final String user = userText.getText().toString();
+                    final String pass = pwText.getText().toString();
 
                     if (DEBUG)
                     {
                         ipText.setText("192.168.1.145");
-                        smText.setText("255.255.255.0");
-                        gwText.setText("10.80.36.1");
-                        dnsText.setText("10.80.36.1");
                     }
                     if (!isValidIP(ip))
                     {
                         ipText.setError("Invalid IP");
-                    }
-                    else if (!isValidSubnet(sm))
-                    {
-                        smText.setError("Invalid Subnet Mask");
-                    }
-                    else if (!isValidIP(gw))
-                    {
-                        gwText.setError("Invalid Gateway");
-                    }
-                    else if (!isValidIP(dns))
-                    {
-                        dnsText.setError("Invalid DNS Server");
                     }
                     else
                     {
@@ -441,7 +409,7 @@ public class MainActivity extends Activity
                                     String result = "";
                                     try
                                     {
-                                        result = testConnection(ip);
+                                        result = testConnection(ip, user, pass);
                                     }
                                     catch (Exception e)
                                     {
@@ -473,6 +441,8 @@ public class MainActivity extends Activity
                 {
                     // Used to hold ip, which we will pass to the next activity
                     final String ip = ipText.getText().toString();
+                    final String u = userText.getText().toString();
+                    final String p = pwText.getText().toString();
                     // Ensure an ip exists and is properly formatted
                     if (!isValidIP(ip))
                     {
@@ -480,9 +450,10 @@ public class MainActivity extends Activity
                     }
                     else
                     {
-//                        Intent intent = new Intent(getActivity(), SelectMachineActivity.class);
                         Intent intent = new Intent(getActivity(), Dashboard.class);
                         intent.putExtra("cloudServerIP", ip);
+                        intent.putExtra("username", u);
+                        intent.putExtra("password", p);
                         startActivity(intent);
                         getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
                     }

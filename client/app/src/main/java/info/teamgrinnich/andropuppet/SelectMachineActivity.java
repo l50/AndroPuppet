@@ -32,6 +32,8 @@ public class SelectMachineActivity extends Activity
     private RadioButton radioButton;
     private Button button;
     private String ipAddress = "";
+    private String user = "";
+    private String pass = "";
 
     /**
      * Used to run debug blocks which help move development along
@@ -47,6 +49,8 @@ public class SelectMachineActivity extends Activity
         if (extras != null)
         {
             ipAddress = extras.getString("cloudServerIP");
+            user = extras.getString("username");
+            pass = extras.getString("password");
         }
         onButtonPress();
     }
@@ -63,9 +67,9 @@ public class SelectMachineActivity extends Activity
         if (machine.equals("Basic Developer Machine"))
             return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up developer)";
         else if (machine.equals("Penetration Testing Machine"))
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up penetration)";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up doomMachine)";
         else
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up penetration)";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up doomMachine)";
     }
 
     /**
@@ -76,7 +80,7 @@ public class SelectMachineActivity extends Activity
      * @return The result of trying to build the machine
      * @throws IOException If there is an issue during connectivity
      */
-    private String buildMachine(String machine, String ipAddress) throws IOException
+    private String buildMachine(String machine, String ipAddress, String username, String password) throws IOException
     {
         JSch jsch = new JSch();
         com.jcraft.jsch.Session session = null;
@@ -87,8 +91,8 @@ public class SelectMachineActivity extends Activity
 
         try
         {
-            session = jsch.getSession("user", ipAddress, 22);
-            session.setPassword("pass");
+            session = jsch.getSession(user, ipAddress, 22);
+            session.setPassword(pass);
 
             // Avoid asking for key confirmation
             Properties prop = new Properties();
@@ -159,7 +163,7 @@ public class SelectMachineActivity extends Activity
                             String result = "";
                             try
                             {
-                                result = buildMachine(radioButton.getText().toString(), ipAddress);
+                                result = buildMachine(radioButton.getText().toString(), ipAddress, user, pass);
                             }
                             catch (Exception e)
                             {

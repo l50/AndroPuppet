@@ -27,6 +27,10 @@
             android:name=".Dashboard"
             android:label="@string/title_activity_dashboard" >
         </activity>
+        <activity
+            android:name=".Machine"
+            android:label="@string/title_activity_machine" >
+        </activity>
     </application>
 
 </manifest>
