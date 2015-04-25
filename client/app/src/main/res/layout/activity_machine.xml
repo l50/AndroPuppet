@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/machineip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ip_addr"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="206dp"/>
+
+    <TextView
+        android:id="@+id/machinestatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/machine_status"
+        android:layout_below="@+id/machineip"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        style="?android:attr/buttonStyleInset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Destroy Machine"
+        android:id="@+id/destroymachine"
+        android:background="#FF0000"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="102dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
