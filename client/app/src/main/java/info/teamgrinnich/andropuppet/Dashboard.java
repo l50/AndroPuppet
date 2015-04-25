@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -180,6 +181,21 @@ public class Dashboard extends Activity
             Toast toast = Toast.makeText(Dashboard.this, "Unable to connect to the target system!", Toast.LENGTH_SHORT);
             toast.show();
         }
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                String machineName = lv.getItemAtPosition(position).toString();
+                Intent intent = new Intent(getApplicationContext(), Machine.class);
+                intent.putExtra("cloudServerIP", ipAddress);
+                intent.putExtra("username", user);
+                intent.putExtra("password", pass);
+                intent.putExtra("machineName", machineName);
+                startActivity(intent);
+            }
+        });
 
         buildMachine.setOnClickListener(new View.OnClickListener()
         {
