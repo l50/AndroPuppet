@@ -19,5 +19,9 @@ if (machine.empty?)
   puts 'No machine given'
 else
   ipAddr = `vagrant ssh #{machine} -c 'ifconfig | grep -oP "inet addr:\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}" | grep -oP "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}" | tail -n 2 | head -n 1'`
-  puts "IP ADDRESS: #{ipAddr}"
+  if (ipAddr == '0.0.0.0')
+    puts "#{ipAddr},Disconnected from network"
+  else
+    puts "#{ipAddr},Connected to network"
+  end
 end
