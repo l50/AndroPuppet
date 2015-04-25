@@ -1,10 +1,8 @@
 package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -24,7 +22,7 @@ import java.util.Properties;
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
  * @version 1.0
- * @since 2014-03-24
+ * @since 2015-04-25
  */
 public class SelectMachineActivity extends Activity
 {
@@ -183,20 +181,7 @@ public class SelectMachineActivity extends Activity
                     Toast toast = Toast.makeText(SelectMachineActivity.this, "Unable to connect to the target system!", Toast.LENGTH_SHORT);
                     toast.show();
                 }
-                // Set up to work properly with the Toast announcing the successful creation of a machine
-                final Intent intent = new Intent(v.getContext(), Dashboard.class);
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable()
-                {
-                    public void run()
-                    {
-                        intent.putExtra("cloudServerIP", ipAddress);
-                        startActivity(intent);
-                        overridePendingTransition(R.animator.animation1, R.animator.animation2);
-                    }
-                }, 3500);
-
+                finish();
             }
         });
     }
