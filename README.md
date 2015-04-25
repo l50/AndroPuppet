@@ -38,7 +38,7 @@ A server must have the latest version of Vagrant and VirtualBox installed. Addit
 ##Core Functionality
 AndroPuppet will provide an interface that will allow for a user to connect to a server on which they can deploy the infrastructure. If there is an established connection between AndroPuppet and the server, the user will be able to view existing virtual machines detected on the server as well as create new ones.
 
-If there are four virtual machines already created, the user will be required to destroy at least one of them to create a new virtual machine. Assuming the user was able to successfully connect and there is room for a new machine, the user will be given the option to create a new machine by specifying a desired system template out of the list of available templates. A user can also specify a template by selecting the custom template button and then entering in the URL associated with a git repository. Once they have specified the template they want to use, they will be able to deploy the machine to the server. 
+If there are four virtual machines already created, the user will be required to destroy at least one of them to create a new virtual machine. Assuming the user was able to successfully connect and there is room for a new machine, the user will be given the option to create a new machine by specifying a desired system template out of the list of available templates.
 
 ##Future Work
 
