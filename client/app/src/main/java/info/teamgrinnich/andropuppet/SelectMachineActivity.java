@@ -116,13 +116,11 @@ public class SelectMachineActivity extends Activity
         catch (JSchException ex)
         {
             String s = ex.toString();
-            System.out.println(s);
             result = "Invalid credentials - failed to build " + machine + "!";
         }
         catch (InterruptedException ex)
         {
             String s = ex.toString();
-            System.out.println(s);
             result = "Connection interrupted - failed to build " + machine + "!";
         }
         finally

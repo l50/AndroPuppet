@@ -61,8 +61,8 @@ public class Machine extends Activity
             // Execute command
             channel.setCommand(command);
             channel.connect(1000);
-            // Need to increase to this point to allow for the result to come in
-            java.lang.Thread.sleep(8000);
+            // 4000 seems like a (mostly) optimal amount of time to send the ssh request for info
+            java.lang.Thread.sleep(4000);
 
             result = stream.toString();
         }
@@ -106,6 +106,8 @@ public class Machine extends Activity
             pass = extras.getString("password");
             machineName = extras.getString("machineName");
         }
+        Toast status2 = Toast.makeText(Machine.this, "Populating information for " + machineName + ", please wait!", Toast.LENGTH_LONG);
+        status2.show();
         try
         {
             new AsyncTask<String, String, String>()
@@ -117,6 +119,10 @@ public class Machine extends Activity
                     try
                     {
                         result = getMachineInfo(serverIPAddress, user, pass, machineName);
+                        while (result.isEmpty())
+                        {
+                            result = getMachineInfo(serverIPAddress, user, pass, machineName);
+                        }
                     }
                     catch (Exception e)
                     {

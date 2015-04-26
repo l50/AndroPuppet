@@ -59,12 +59,14 @@ public class MainActivity extends Activity
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mSettingTitles;
+    static String finalResult;
+
 
     public static final String MENU_ITEM = "menu_item_number";
     /**
      * Used to run debug blocks which help move development along
      */
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -333,9 +335,9 @@ public class MainActivity extends Activity
 
             Matcher matcher = successfulSSH.matcher(result);
             if (matcher.find())
-            {
                 result = "Successfully connected!";
-            }
+            else
+                result = "Failed to connect!";
         }
         catch (JSchException ex)
         {
@@ -379,6 +381,7 @@ public class MainActivity extends Activity
             final EditText userText = (EditText) rootView.findViewById(R.id.edittextuser);
             final EditText pwText = (EditText) rootView.findViewById(R.id.edittextpw);
 
+
             // Listener for test connection button
             rootView.findViewById(R.id.testServerConnectButton).setOnClickListener(new View.OnClickListener()
             {
@@ -421,6 +424,9 @@ public class MainActivity extends Activity
                                 protected void onPostExecute(String result)
                                 {
                                     Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                                    if (result.contains("Success"))
+                                        finalResult = "Success";
+                                    else finalResult = "Failure";
                                 }
                             }.execute("1");
 
@@ -439,23 +445,31 @@ public class MainActivity extends Activity
                 @Override
                 public void onClick(View v)
                 {
-                    // Used to hold ip, which we will pass to the next activity
-                    final String ip = ipText.getText().toString();
-                    final String u = userText.getText().toString();
-                    final String p = pwText.getText().toString();
-                    // Ensure an ip exists and is properly formatted
-                    if (!isValidIP(ip))
+                    if (finalResult.contains("Failure"))
                     {
-                        ipText.setError("Invalid IP");
+                        Toast toast = Toast.makeText(getActivity(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                     else
                     {
-                        Intent intent = new Intent(getActivity(), Dashboard.class);
-                        intent.putExtra("cloudServerIP", ip);
-                        intent.putExtra("username", u);
-                        intent.putExtra("password", p);
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                        // Used to hold ip, which we will pass to the next activity
+                        final String ip = ipText.getText().toString();
+                        final String u = userText.getText().toString();
+                        final String p = pwText.getText().toString();
+                        // Ensure an ip exists and is properly formatted
+                        if (!isValidIP(ip))
+                        {
+                            ipText.setError("Invalid IP");
+                        }
+                        else
+                        {
+                            Intent intent = new Intent(getActivity(), Dashboard.class);
+                            intent.putExtra("cloudServerIP", ip);
+                            intent.putExtra("username", u);
+                            intent.putExtra("password", p);
+                            startActivity(intent);
+                            getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                        }
                     }
                 }
             });

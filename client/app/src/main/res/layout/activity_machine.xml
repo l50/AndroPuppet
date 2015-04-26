@@ -7,7 +7,6 @@
         android:id="@+id/machineip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ip_addr"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="206dp"/>
@@ -16,7 +15,6 @@
         android:id="@+id/machinestatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/machine_status"
         android:layout_below="@+id/machineip"
         android:layout_centerHorizontal="true"/>
 
