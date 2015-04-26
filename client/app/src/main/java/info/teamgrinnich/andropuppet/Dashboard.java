@@ -32,28 +32,34 @@ public class Dashboard extends Activity
     private String ipAddress = "";
     private String user = "";
     private String pass = "";
+    private GetMachines getMachines;
 
     private HashMap parseOutput(String machines)
     {
         HashMap listOfMachines = new HashMap();
 
-        Pattern stringCuration = Pattern.compile("(.*running|not\\screated virtualbox\\))\\s"
-        );
-        Matcher stringCurationMatch = stringCuration.matcher(machines);
-        ArrayList<String> machineCurationList = new ArrayList<String>();
-
-        while (stringCurationMatch.find())
+        if (!machines.isEmpty())
         {
-            machineCurationList.add(stringCurationMatch.group(1));
-        }
+            Pattern stringCuration = Pattern.compile("(.*running|not\\screated virtualbox\\))\\s"
+            );
+            Matcher stringCurationMatch = stringCuration.matcher(machines);
+            ArrayList<String> machineCurationList = new ArrayList<String>();
 
-        Pattern status = Pattern.compile("(\\w+)\\s+(\\w+)");
-        for (String machine : machineCurationList)
-        {
-            Matcher statusMatch = status.matcher(machine);
-            if (statusMatch.find())
-                listOfMachines.put(statusMatch.group(1), statusMatch.group(2));
+            while (stringCurationMatch.find())
+            {
+                machineCurationList.add(stringCurationMatch.group(1));
+            }
+
+            Pattern status = Pattern.compile("(\\w+)\\s+(\\w+)");
+            for (String machine : machineCurationList)
+            {
+                Matcher statusMatch = status.matcher(machine);
+                if (statusMatch.find())
+                    listOfMachines.put(statusMatch.group(1), statusMatch.group(2));
+            }
         }
+        else
+            listOfMachines.put("Run again", "Run again");
         return listOfMachines;
     }
 
@@ -89,8 +95,8 @@ public class Dashboard extends Activity
             // Execute command
             channel.setCommand(command);
             channel.connect(1000);
-            // Need to increase to this point to allow for the result to come in
-            java.lang.Thread.sleep(8000);
+            // 4000 seems like a (mostly) optimal amount of time to send the ssh request for info
+            java.lang.Thread.sleep(4000);
 
             result = stream.toString();
         }
@@ -114,8 +120,66 @@ public class Dashboard extends Activity
         }
     }
 
+    public void updateMachines()
+    {
+        Toast status2 = Toast.makeText(Dashboard.this, "Populating Systems, please wait!", Toast.LENGTH_LONG);
+        status2.show();
+
+        try
+        {
+            getMachines = new GetMachines();
+            getMachines.execute("1");
+        }
+        catch (Exception e)
+        {
+            Toast toast = Toast.makeText(Dashboard.this, "Unable to connect to the target system!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                String machineName = lv.getItemAtPosition(position).toString();
+                if (!machineName.contains("No Machines Detected"))
+                {
+                    getMachines.cancel(true);
+                    Intent intent = new Intent(getApplicationContext(), Machine.class);
+                    intent.putExtra("cloudServerIP", ipAddress);
+                    intent.putExtra("username", user);
+                    intent.putExtra("password", pass);
+                    intent.putExtra("machineName", machineName);
+                    startActivity(intent);
+                }
+            }
+        });
+        buildMachine.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (machineList.size() < 4)
+                {
+                    getMachines.cancel(true);
+                    Intent intent = new Intent(v.getContext(), SelectMachineActivity.class);
+                    intent.putExtra("cloudServerIP", ipAddress);
+                    intent.putExtra("username", user);
+                    intent.putExtra("password", pass);
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                }
+                else
+                {
+                    Toast toast = Toast.makeText(Dashboard.this, "You can only have 4 machines, delete a machine and try again!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
@@ -135,89 +199,63 @@ public class Dashboard extends Activity
             user = extras.getString("username");
             pass = extras.getString("password");
         }
-        Toast status2 = Toast.makeText(Dashboard.this, "Populating Systems, please wait!", Toast.LENGTH_LONG);
-        status2.show();
 
-        try
-        {
-            new AsyncTask<String, String, HashMap>()
-            {
-                @Override
-                protected HashMap doInBackground(String... params)
-                {
-                    HashMap result = null;
-                    try
-                    {
-                        result = queryMachine(ipAddress, user, pass);
-                        // Maybe take out, was trying to fix the problem where the query comes back
-                        // empty
-                        if (result.isEmpty())
-                        {
-                            result = queryMachine(ipAddress, user, pass);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    return result;
-                }
-
-                protected void onPostExecute(final HashMap result)
-                {
-                    for (Object key : result.keySet())
-                    {
-                        if (result.get(key).toString().contains("running"))
-                        {
-                            machineList.add(key.toString());
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }.execute("1");
-        }
-        catch (Exception e)
-        {
-            Toast toast = Toast.makeText(Dashboard.this, "Unable to connect to the target system!", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                String machineName = lv.getItemAtPosition(position).toString();
-                Intent intent = new Intent(getApplicationContext(), Machine.class);
-                intent.putExtra("cloudServerIP", ipAddress);
-                intent.putExtra("username", user);
-                intent.putExtra("password", pass);
-                intent.putExtra("machineName", machineName);
-                startActivity(intent);
-            }
-        });
-
-        buildMachine.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if (machineList.size() < 4)
-                {
-                    Intent intent = new Intent(v.getContext(), SelectMachineActivity.class);
-                    intent.putExtra("cloudServerIP", ipAddress);
-                    intent.putExtra("username", user);
-                    intent.putExtra("password", pass);
-                    startActivity(intent);
-                    overridePendingTransition(R.animator.animation1, R.animator.animation2);
-                }
-                else
-                {
-                    Toast toast = Toast.makeText(Dashboard.this, "You can only have 4 machines, delete a machine and try again!", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            }
-        });
+        updateMachines();
     }
 
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        updateMachines();
+    }
+
+    private class GetMachines extends AsyncTask<String, String, HashMap>
+    {
+        @Override
+        protected HashMap doInBackground(String... params)
+        {
+            HashMap result = null;
+            try
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (isCancelled()) break;
+                    result = queryMachine(ipAddress, user, pass);
+                }
+
+                while (result.containsKey("Run again"))
+                {
+                    result = queryMachine(ipAddress, user, pass);
+                }
+
+                if (result.isEmpty())
+                {
+                    result.put("No Machines Detected", "No Machines Detected");
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        protected void onPostExecute(final HashMap result)
+        {
+            machineList.clear();
+            for (Object key : result.keySet())
+            {
+                if (result.get(key).toString().contains("running") || result.get(key).toString().contains("No"))
+                {
+                    // Check if the machineList already contains the machine, if not add it
+                    if (!machineList.contains(key.toString()))
+                    {
+                        machineList.add(key.toString());
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
 }
