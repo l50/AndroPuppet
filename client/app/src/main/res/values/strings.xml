@@ -21,6 +21,8 @@
     <string name="title_activity_select_machine">SelectMachineActivity</string>
     <string name="dev_machine">Basic Developer Machine</string>
     <string name="pentesting_machine">Penetration Testing Machine</string>
+    <string name="puppetdev_machine">Puppet Development Machine</string>
+    <string name="railsdev_machine">Rails Development Machine</string>
     <string name="build">Build!</string>
 
     <string name="machine_status">Machine Status: </string>

@@ -29,12 +29,14 @@ public class Machine extends Activity
 
     private String getCommand(String machine)
     {
-        if (machine.equals("developer"))
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && ruby getIPAddress.rb developer)";
+        if (machine.equals("basicDev"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && ruby getIPAddress.rb basicDev)";
         else if (machine.equals("doomMachine"))
             return "(cd /Users/l/programs/java/Android/AndroPuppet/server && ruby getIPAddress.rb doomMachine)";
+        else if (machine.equals("puppetDev"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && ruby getIPAddress.rb puppetDev)";
         else
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && ruby getIPAddress.rb doomMachine)";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && ruby getIPAddress.rb railsDev)";
     }
 
     private String getMachineInfo(String ipAddress, String user, String pass, String machineName) throws IOException
@@ -98,12 +100,14 @@ public class Machine extends Activity
 
     private String getDestroyCommand(String machine)
     {
-        if (machine.equals("developer"))
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f developer)";
+        if (machine.equals("basicDev"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f basicDev)";
         else if (machine.equals("doomMachine"))
             return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f doomMachine)";
+        else if (machine.equals("puppetDev"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f puppetDev)";
         else
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f developer)";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f railsDev)";
     }
 
     private void destroyMachine(String machine)
@@ -147,9 +151,10 @@ public class Machine extends Activity
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         Intent intent = new Intent();
-        intent.putExtra("back","back");
+        intent.putExtra("back", "back");
         setResult(RESULT_OK, intent);
         finish();
     }
