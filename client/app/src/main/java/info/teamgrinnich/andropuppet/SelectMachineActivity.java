@@ -109,7 +109,6 @@ public class SelectMachineActivity extends Activity
             java.lang.Thread.sleep(500);
 
             result = stream.toString();
-            System.out.println(result);
 
             result = "Building " + machine + "- feel free to SSH in to check progress!";
         }
@@ -170,7 +169,7 @@ public class SelectMachineActivity extends Activity
 
                         protected void onPostExecute(final String result)
                         {
-                            Toast.makeText(SelectMachineActivity.this, result, Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     }.execute("1");
                 }
@@ -179,7 +178,6 @@ public class SelectMachineActivity extends Activity
                     Toast toast = Toast.makeText(SelectMachineActivity.this, "Unable to connect to the target system!", Toast.LENGTH_SHORT);
                     toast.show();
                 }
-                finish();
             }
         });
     }
