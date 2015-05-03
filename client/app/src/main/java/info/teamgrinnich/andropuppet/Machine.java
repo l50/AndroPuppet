@@ -1,6 +1,8 @@
 package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +25,7 @@ public class Machine extends Activity
     private String user = "";
     private String pass = "";
     private String machineName = "";
+    private ProgressDialog pd;
 
     private String getCommand(String machine)
     {
@@ -144,6 +147,14 @@ public class Machine extends Activity
     }
 
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("back","back");
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -157,8 +168,8 @@ public class Machine extends Activity
             pass = extras.getString("password");
             machineName = extras.getString("machineName");
         }
-        Toast status2 = Toast.makeText(Machine.this, "Populating information for " + machineName + ", please wait!", Toast.LENGTH_LONG);
-        status2.show();
+        pd = ProgressDialog.show(this, "Please Wait...", "Populating information for " + machineName, false, true);
+        pd.setCanceledOnTouchOutside(false);
         try
         {
             new AsyncTask<String, String, String>()
@@ -174,6 +185,8 @@ public class Machine extends Activity
                         {
                             result = getMachineInfo(serverIPAddress, user, pass, machineName);
                         }
+                        if (!result.isEmpty())
+                            pd.dismiss();
                     }
                     catch (Exception e)
                     {
@@ -189,6 +202,7 @@ public class Machine extends Activity
                     ip.setText("IP Address: " + output[0]);
                     TextView status = (TextView) findViewById(R.id.machinestatus);
                     status.setText("Machine Status: " + output[1]);
+
                 }
             }.execute("1");
         }
