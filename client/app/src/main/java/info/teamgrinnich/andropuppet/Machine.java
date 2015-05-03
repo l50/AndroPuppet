@@ -92,6 +92,57 @@ public class Machine extends Activity
         return resultItems;
     }
 
+
+    private String getDestroyCommand(String machine)
+    {
+        if (machine.equals("developer"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f developer)";
+        else if (machine.equals("doomMachine"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f doomMachine)";
+        else
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f developer)";
+    }
+
+    private void destroyMachine(String machine)
+    {
+
+        JSch jsch = new JSch();
+        com.jcraft.jsch.Session session = null;
+        String command;
+
+        command = getDestroyCommand(machine);
+        try
+        {
+            session = jsch.getSession(user, serverIPAddress, 22);
+            session.setPassword(pass);
+
+            // Avoid asking for key confirmation
+            Properties prop = new Properties();
+            prop.put("StrictHostKeyChecking", "no");
+            session.setConfig(prop);
+            session.connect();
+
+            // SSH Channel
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            channel.setOutputStream(stream);
+
+            // Execute command
+            channel.setCommand(command);
+            channel.connect(1000);
+        }
+        catch (JSchException ex)
+        {
+            String s = ex.toString();
+            System.out.println(s);
+        }
+        finally
+        {
+            if (session != null)
+                session.disconnect();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -185,87 +236,5 @@ public class Machine extends Activity
                 }
             }
         });
-    }
-
-    private String getDestroyCommand(String machine)
-    {
-        if (machine.equals("developer"))
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f developer)";
-        else if (machine.equals("doomMachine"))
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f doomMachine)";
-        else
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant destroy -f developer)";
-    }
-
-    private void destroyMachine(String machine)
-    {
-
-        JSch jsch = new JSch();
-        com.jcraft.jsch.Session session = null;
-        String command;
-
-        command = getDestroyCommand(machine);
-        try
-        {
-            session = jsch.getSession(user, serverIPAddress, 22);
-            session.setPassword(pass);
-
-            // Avoid asking for key confirmation
-            Properties prop = new Properties();
-            prop.put("StrictHostKeyChecking", "no");
-            session.setConfig(prop);
-            session.connect();
-
-            // SSH Channel
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            channel.setOutputStream(stream);
-
-            // Execute command
-            channel.setCommand(command);
-            channel.connect(1000);
-        }
-        catch (JSchException ex)
-        {
-            String s = ex.toString();
-            System.out.println(s);
-        }
-        finally
-        {
-            if (session != null)
-                session.disconnect();
-        }
-    }
-
-    public class MachineInfo
-    {
-        private String ipAddress;
-        private String status;
-
-        public MachineInfo(String ipAddress, String status)
-        {
-            this.ipAddress = ipAddress;
-            this.status = status;
-        }
-
-        public String getIpAddress()
-        {
-            return ipAddress;
-        }
-
-        public void setIpAddress(String ipAddress)
-        {
-            this.ipAddress = ipAddress;
-        }
-
-        public String getStatus()
-        {
-            return status;
-        }
-
-        public void setStatus(String status)
-        {
-            this.status = status;
-        }
     }
 }
