@@ -1,6 +1,7 @@
 package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +33,9 @@ public class Dashboard extends Activity
     private String ipAddress = "";
     private String user = "";
     private String pass = "";
-    private GetMachines getMachines;
+    private ProgressDialog pd;
+    private boolean resume = true;
+
 
     private HashMap parseOutput(String machines)
     {
@@ -122,12 +125,10 @@ public class Dashboard extends Activity
 
     public void updateMachines()
     {
-        Toast status2 = Toast.makeText(Dashboard.this, "Populating Systems, please wait!", Toast.LENGTH_LONG);
-        status2.show();
+        final GetMachines getMachines = new GetMachines();
 
         try
         {
-            getMachines = new GetMachines();
             getMachines.execute("1");
         }
         catch (Exception e)
@@ -150,7 +151,8 @@ public class Dashboard extends Activity
                     intent.putExtra("username", user);
                     intent.putExtra("password", pass);
                     intent.putExtra("machineName", machineName);
-                    startActivity(intent);
+//                    startActivity(intent);
+                    startActivityForResult(intent, 1);
                 }
             }
         });
@@ -166,7 +168,8 @@ public class Dashboard extends Activity
                     intent.putExtra("cloudServerIP", ipAddress);
                     intent.putExtra("username", user);
                     intent.putExtra("password", pass);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
+//                    startActivity(intent);
                     overridePendingTransition(R.animator.animation1, R.animator.animation2);
                 }
                 else
@@ -192,6 +195,9 @@ public class Dashboard extends Activity
                 R.layout.customlayout, machineList);
         lv.setAdapter(adapter);
 
+//        pd = ProgressDialog.show(this, "Please Wait...", "Populating Systems", false, true);
+//        pd.setCanceledOnTouchOutside(false);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
@@ -200,14 +206,37 @@ public class Dashboard extends Activity
             pass = extras.getString("password");
         }
 
-        updateMachines();
+//        updateMachines();
     }
 
     @Override
-    protected void onRestart()
+    protected void onResume()
     {
-        super.onRestart();
-        updateMachines();
+        super.onResume();
+        if (resume)
+        {
+            pd = ProgressDialog.show(this, "Please Wait...", "Updating Systems", false, true);
+            pd.setCanceledOnTouchOutside(false);
+            updateMachines();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == 1)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                String returnedInfo = data.getStringExtra("back");
+                if (returnedInfo.contains("back"))
+                {
+                    resume = false;
+                }
+            }
+            else
+                resume = true;
+        }
     }
 
     private class GetMachines extends AsyncTask<String, String, HashMap>
@@ -218,10 +247,20 @@ public class Dashboard extends Activity
             HashMap result = null;
             try
             {
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     if (isCancelled()) break;
                     result = queryMachine(ipAddress, user, pass);
+                    // experimenting with this as a possible way to deal with the problems
+                    if (i > 1 && result != null) break;
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
 
                 while (result.containsKey("Run again"))
@@ -232,7 +271,10 @@ public class Dashboard extends Activity
                 if (result.isEmpty())
                 {
                     result.put("No Machines Detected", "No Machines Detected");
+                    pd.dismiss();
                 }
+                else
+                    pd.dismiss();
             }
             catch (Exception e)
             {
