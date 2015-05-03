@@ -23,7 +23,7 @@ import java.util.Properties;
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
  * @version 1.0
- * @since 2015-04-25
+ * @since 2015-05-03
  */
 public class SelectMachineActivity extends Activity
 {
@@ -41,9 +41,10 @@ public class SelectMachineActivity extends Activity
 
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         Intent intent = new Intent();
-        intent.putExtra("back","back");
+        intent.putExtra("back", "back");
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -73,11 +74,13 @@ public class SelectMachineActivity extends Activity
     private String getCommand(String machine)
     {
         if (machine.equals("Basic Developer Machine"))
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up developer)";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up basicDev)";
         else if (machine.equals("Penetration Testing Machine"))
             return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up doomMachine)";
+        else if (machine.equals("Puppet Development Machine"))
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up puppetDev)";
         else
-            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up doomMachine)";
+            return "(cd /Users/l/programs/java/Android/AndroPuppet/server && vagrant up railsDev)";
     }
 
     /**
