@@ -1,6 +1,7 @@
 package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +38,15 @@ public class SelectMachineActivity extends Activity
      * Used to run debug blocks which help move development along
      */
     public static boolean DEBUG = true;
+
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("back","back");
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
