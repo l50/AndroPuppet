@@ -392,10 +392,6 @@ public class MainActivity extends Activity
                     final String user = userText.getText().toString();
                     final String pass = pwText.getText().toString();
 
-                    if (DEBUG)
-                    {
-                        ipText.setText("192.168.1.145");
-                    }
                     if (!isValidIP(ip))
                     {
                         ipText.setError("Invalid IP");
@@ -445,6 +441,8 @@ public class MainActivity extends Activity
                 @Override
                 public void onClick(View v)
                 {
+                    if (DEBUG)
+                        finalResult = "Success";
                     if (finalResult.contains("Failure"))
                     {
                         Toast toast = Toast.makeText(getActivity(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
