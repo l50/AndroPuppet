@@ -252,7 +252,7 @@ public class Dashboard extends Activity
                     if (isCancelled()) break;
                     result = queryMachine(ipAddress, user, pass);
                     // experimenting with this as a possible way to deal with the problems
-                    if (i > 1 && result != null) break;
+                    if (i > 2 && result != null) break;
                     try
                     {
                         Thread.sleep(1000);
