@@ -1,30 +1,134 @@
 Vagrant.configure(2) do |config|
-  config.vm.box = "cyplo/ubuntu-gnome-utopic-gui"
-  config.puppet_install.puppet_version = :latest
+  config.vm.box = "ubuntu/trusty64"
+  # Broken because of puppet 4.0
+  #config.puppet_install.puppet_version = :latest
 
-  config.vm.define :malwarrior do |malwarrior|
-    malwarrior.vm.hostname = 'malwarrior-01'
-    malwarrior.vm.network :private_network, ip: "192.168.50.20"
+  config.vm.define :basicDev do |basicDev|
+    basicDev.vm.hostname = 'basicDev'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.73'
+    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.librarian_puppet.puppetfile_dir = "puppet"
 
-    malwarrior.vm.provider :virtualbox do |vm|
-      vm.gui = true
+    config.vm.provision "shell", :inline => <<-SHELL
+    # Install vagrant
+   # wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
+   # dpkg -i *.deb
+    # Install git
+    apt-get install git -y
+    # Used to install puppet on vagrant machines
+    #vagrant plugin install vagrant-puppet-install
+    apt-get install puppet -y
+    # Install emacs for debugging purposes
+    apt-get install emacs -y
+    # Used for vagrant boxes
+    apt-get install nfs-kernel-server -y
+  SHELL
+
+    basicDev.vm.provider :virtualbox do |vm|
+      #vm.gui = true
       vm.customize [
                        "modifyvm", :id,
-                       "--memory", 2048,
-                       "--cpus", "2"
+                       "--memory", 1024,
+                       "--cpus", "1"
                    ]
     end
   end
-  config.vm.provision :shell, :path => "scripts/cuckooautoinstall/cuckooautoinstall.sh"
 
-  #config.vm.provision "shell", :inline => <<-SHELL
-  # apt-get update
-  #apt-get install -y puppet
-  #SHELL
+  config.vm.define :doomMachine do |doomMachine|
+    doomMachine.vm.hostname = 'doomMachine'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.74'
+    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.librarian_puppet.puppetfile_dir = "puppet"
+
+    config.vm.provision "shell", :inline => <<-SHELL
+    # Install vagrant
+    #wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
+    #dpkg -i *.deb
+    # Install git
+    apt-get install git -y
+    # Used to install puppet on vagrant machines
+    #vagrant plugin install vagrant-puppet-install
+    apt-get install puppet -y
+    # Install emacs for debugging purposes
+    apt-get install emacs -y
+    # Used for vagrant boxes
+    apt-get install nfs-kernel-server -y
+    SHELL
+
+    doomMachine.vm.provider :virtualbox do |vm|
+      #vm.gui = true
+      vm.customize [
+                       "modifyvm", :id,
+                       "--memory", 1024,
+                       "--cpus", "1"
+                   ]
+    end
+  end
+
+config.vm.define :puppetDev do |puppetDev|
+    puppetDev.vm.hostname = 'puppetDev'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.75'
+    config.librarian_puppet.puppetfile_dir = "puppet"
+
+    config.vm.provision "shell", :inline => <<-SHELL
+    # Install vagrant
+    #wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
+    #dpkg -i *.deb
+    # Install git
+    apt-get install git -y
+    # Used to install puppet on vagrant machines
+    #vagrant plugin install vagrant-puppet-install
+    apt-get install puppet -y
+    # Install emacs for debugging purposes
+    apt-get install emacs -y
+    # Used for vagrant boxes
+    apt-get install nfs-kernel-server -y
+    SHELL
+
+    puppetDev.vm.provider :virtualbox do |vm|
+      #vm.gui = true
+      vm.customize [
+                       "modifyvm", :id,
+                       "--memory", 1024,
+                       "--cpus", "1"
+                   ]
+    end
+  end
+
+  config.vm.define :railsDev do |railsDev|
+    railsDev.vm.hostname = 'railsDev'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.76'
+#    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.librarian_puppet.puppetfile_dir = "puppet"
+
+    config.vm.provision "shell", :inline => <<-SHELL
+    # Install vagrant
+    #wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
+    #dpkg -i *.deb
+    # Install git
+    apt-get install git -y
+    # Used to install puppet on vagrant machines
+    #vagrant plugin install vagrant-puppet-install
+    apt-get install puppet -y
+    # Install emacs for debugging purposes
+    apt-get install emacs -y
+    # Used for vagrant boxes
+    apt-get install nfs-kernel-server -y
+    SHELL
+
+    railsDev.vm.provider :virtualbox do |vm|
+      #vm.gui = true
+      vm.customize [
+                       "modifyvm", :id,
+                       "--memory", 1024,
+                       "--cpus", "1"
+                   ]
+    end
+  end
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "manifests"
     puppet.module_path    = "modules"
-    puppet.manifest_file  = "site.pp"
+    puppet.manifest_file  = "default.pp"
   end
 end

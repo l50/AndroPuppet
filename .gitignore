@@ -1,8 +1,12 @@
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+*.idea*
+client/.idea/workspace.xml
+client/.idea/libraries
 .DS_Store
 /build
 server/modules/
 server/.tmp/
+*.vagrant*
+*.bin
+server/.vagrant/*

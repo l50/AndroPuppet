@@ -1,13 +1,15 @@
-package info.teamgrinnich.slidemenu;
+package info.teamgrinnich.andropuppet;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -24,18 +26,29 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Main Activity for ViewComponent for AndroPuppet
- *
+ * <p/>
+ * Used to facilitate testing connectivity from the Android device to the cloud server and get the network
+ * information about the Android device
+ * <p/>
  * Based on code from here: https://developer.android.com/training/implementing-navigation/nav-drawer.html
  *
  * @author Jayson Grace ( jayson.e.grace @ gmail.com )
  * @version 1.0
- * @since 2014-03-01
+ * @since 2014-04-07
  */
 public class MainActivity extends Activity
 {
@@ -46,8 +59,14 @@ public class MainActivity extends Activity
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mSettingTitles;
+    static String finalResult;
+
 
     public static final String MENU_ITEM = "menu_item_number";
+    /**
+     * Used to run debug blocks which help move development along
+     */
+    public static boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -140,6 +159,12 @@ public class MainActivity extends Activity
         }
     }
 
+    /**
+     * Get information about the network the android device is connected to
+     *
+     * @param context current context
+     * @return all network information for the android device
+     */
     private String[] getNetworkInformation(Context context)
     {
         String[] output = new String[4];
@@ -157,6 +182,11 @@ public class MainActivity extends Activity
         return output;
     }
 
+    /**
+     * Select one of the fragment items
+     *
+     * @param position position of the fragment on the menu
+     */
     private void selectItem(int position)
     {
         Fragment fragment = null;
@@ -214,9 +244,11 @@ public class MainActivity extends Activity
      */
     public static class client_settings_Fragment extends Fragment
     {
+        /**
+         * Empty constructor required for fragment subclasses
+         */
         public client_settings_Fragment()
         {
-            // Empty constructor required for fragment subclasses
         }
 
         @Override
@@ -264,18 +296,67 @@ public class MainActivity extends Activity
     }
 
     /**
-     * Validate Subnet Mask
+     * Test connectivity from Android device to the cloud server
      *
-     * @param subnetMask subnet mask to validate
-     * @return whether or not the subnet mask is valid
+     * @param ipAddress IP address for the cloud server
+     * @return The result of attempting to connect to the server
+     * @throws IOException If there is an issue during connectivity
      */
-    private static boolean isValidSubnet(String subnetMask)
+    private static String testConnection(String ipAddress, String username, String password) throws IOException
     {
-        Pattern validSubnet = Pattern.compile("^((128|192|224|240|248|252|254)\\.0\\.0\\.0)|" +
-                "(255\\.(((0|128|192|224|240|248|252|254)\\.0\\.0)|(255\\.(((0|128|192|224" +
-                "|240|248|252|254)\\.0)|255\\.(0|128|192|224|240|248|252|254)))))$");
-        Matcher matcher = validSubnet.matcher(subnetMask);
-        return matcher.matches();
+        Pattern successfulSSH = Pattern.compile("Desktop");
+
+        JSch jsch = new JSch();
+        com.jcraft.jsch.Session session = null;
+        String result = "";
+
+        try
+        {
+            session = jsch.getSession(username, ipAddress, 22);
+            session.setPassword(password);
+
+            // Avoid asking for key confirmation
+            Properties prop = new Properties();
+            prop.put("StrictHostKeyChecking", "no");
+            session.setConfig(prop);
+            session.connect();
+
+            // SSH Channel
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            channel.setOutputStream(stream);
+
+            // Execute command
+            channel.setCommand("ls -lart");
+            channel.connect(1000);
+            java.lang.Thread.sleep(500);
+
+            result = stream.toString();
+
+            Matcher matcher = successfulSSH.matcher(result);
+            if (matcher.find())
+                result = "Successfully connected!";
+            else
+                result = "Failed to connect!";
+        }
+        catch (JSchException ex)
+        {
+            String s = ex.toString();
+            System.out.println(s);
+            result = "Invalid credentials!";
+        }
+        catch (InterruptedException ex)
+        {
+            String s = ex.toString();
+            System.out.println(s);
+            result = "Connection interrupted!";
+        }
+        finally
+        {
+            if (session != null)
+                session.disconnect();
+            return result;
+        }
     }
 
     /**
@@ -297,41 +378,105 @@ public class MainActivity extends Activity
             String listItem = getResources().getStringArray(R.array.settings_array)[i];
 
             final EditText ipText = (EditText) rootView.findViewById(R.id.edittextip);
-            final EditText smText = (EditText) rootView.findViewById(R.id.edittextsm);
-            final EditText gwText = (EditText) rootView.findViewById(R.id.edittextgw);
-            final EditText dnsText = (EditText) rootView.findViewById(R.id.edittextdns);
+            final EditText userText = (EditText) rootView.findViewById(R.id.edittextuser);
+            final EditText pwText = (EditText) rootView.findViewById(R.id.edittextpw);
 
-            rootView.findViewById(R.id.serverConnectButton).setOnClickListener(new View.OnClickListener()
+
+            // Listener for test connection button
+            rootView.findViewById(R.id.testServerConnectButton).setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
                     final String ip = ipText.getText().toString();
+                    final String user = userText.getText().toString();
+                    final String pass = pwText.getText().toString();
+
+                    if (DEBUG)
+                    {
+                        ipText.setText("172.16.50.72");
+                        userText.setText("user");
+                        pwText.setText("pass");
+                    }
                     if (!isValidIP(ip))
                     {
                         ipText.setError("Invalid IP");
                     }
-
-                    final String sm = smText.getText().toString();
-                    if (!isValidSubnet(sm))
+                    else
                     {
-                        smText.setError("Invalid Subnet Mask");
-                    }
+                        try
+                        {
+                            new AsyncTask<String, String, String>()
+                            {
+                                @Override
+                                protected String doInBackground(String... params)
+                                {
+                                    String result = "";
+                                    try
+                                    {
+                                        result = testConnection(ip, user, pass);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    return result;
+                                }
 
-                    final String gw = gwText.getText().toString();
-                    if (!isValidIP(gw))
-                    {
-                        gwText.setError("Invalid Gateway");
-                    }
+                                protected void onPostExecute(String result)
+                                {
+                                    Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                                    if (result.contains("Success"))
+                                        finalResult = "Success";
+                                    else finalResult = "Failure";
+                                }
+                            }.execute("1");
 
-                    final String dns = dnsText.getText().toString();
-                    if (!isValidIP(dns))
-                    {
-                        dnsText.setError("Invalid DNS Server");
+                        }
+                        catch (Exception e)
+                        {
+                            Toast toast = Toast.makeText(getActivity(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
                     }
                 }
             });
-
+            // Listener for connect button
+            rootView.findViewById(R.id.serverConnectButton).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (DEBUG)
+                        finalResult = "Success";
+                    if (finalResult.contains("Failure"))
+                    {
+                        Toast toast = Toast.makeText(getActivity(), "Unable to connect to the target system!", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                    else
+                    {
+                        // Used to hold ip, which we will pass to the next activity
+                        final String ip = ipText.getText().toString();
+                        final String u = userText.getText().toString();
+                        final String p = pwText.getText().toString();
+                        // Ensure an ip exists and is properly formatted
+                        if (!isValidIP(ip))
+                        {
+                            ipText.setError("Invalid IP");
+                        }
+                        else
+                        {
+                            Intent intent = new Intent(getActivity(), Dashboard.class);
+                            intent.putExtra("cloudServerIP", ip);
+                            intent.putExtra("username", u);
+                            intent.putExtra("password", p);
+                            startActivity(intent);
+                            getActivity().overridePendingTransition(R.animator.animation1, R.animator.animation2);
+                        }
+                    }
+                }
+            });
             getActivity().setTitle(listItem);
             return rootView;
         }
