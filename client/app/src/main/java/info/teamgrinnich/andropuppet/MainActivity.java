@@ -392,6 +392,12 @@ public class MainActivity extends Activity
                     final String user = userText.getText().toString();
                     final String pass = pwText.getText().toString();
 
+                    if (DEBUG)
+                    {
+                        ipText.setText("172.16.50.72");
+                        userText.setText("user");
+                        pwText.setText("pass");
+                    }
                     if (!isValidIP(ip))
                     {
                         ipText.setError("Invalid IP");

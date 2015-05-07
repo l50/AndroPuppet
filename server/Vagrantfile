@@ -5,7 +5,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.define :basicDev do |basicDev|
     basicDev.vm.hostname = 'basicDev'
-    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.73'
+    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
     config.librarian_puppet.puppetfile_dir = "puppet"
 
     config.vm.provision "shell", :inline => <<-SHELL
@@ -35,8 +36,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.define :doomMachine do |doomMachine|
     doomMachine.vm.hostname = 'doomMachine'
-    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '10.80.36.64'
-    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.74'
+    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
     config.librarian_puppet.puppetfile_dir = "puppet"
 
     config.vm.provision "shell", :inline => <<-SHELL
@@ -66,8 +67,7 @@ Vagrant.configure(2) do |config|
 
 config.vm.define :puppetDev do |puppetDev|
     puppetDev.vm.hostname = 'puppetDev'
-    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '10.80.36.64'
-    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.75'
     config.librarian_puppet.puppetfile_dir = "puppet"
 
     config.vm.provision "shell", :inline => <<-SHELL
@@ -97,8 +97,8 @@ config.vm.define :puppetDev do |puppetDev|
 
   config.vm.define :railsDev do |railsDev|
     railsDev.vm.hostname = 'railsDev'
-    #config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '10.80.36.64'
-    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)', ip: '172.16.50.76'
+#    config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
     config.librarian_puppet.puppetfile_dir = "puppet"
 
     config.vm.provision "shell", :inline => <<-SHELL
